@@ -1,0 +1,965 @@
+<title>IPA問卷</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+:root {
+  --bg: #F7F9FC;
+  --surface: #FFFFFF;
+  --surface2: #E8EFF7;
+  --primary: #1A3A5C;
+  --accent: #4A90C4;
+  --accent2: #2E7ABF;
+  --text: #2C3E50;
+  --text-muted: #6B7E93;
+  --border: #D0DCE9;
+  --scale-bg: #EBF3FA;
+  --scale-hover: #C8DFF2;
+  --scale-active: #4A90C4;
+  --scale-active-text: #fff;
+  --progress-bg: #D0DCE9;
+  --shadow: 0 2px 12px rgba(26,58,92,0.08);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1E2E;
+    --surface: #162638;
+    --surface2: #1E3248;
+    --primary: #7BB8E0;
+    --accent: #5AA8D8;
+    --accent2: #4A90C4;
+    --text: #E4EDF6;
+    --text-muted: #8AAEC8;
+    --border: #2A4060;
+    --scale-bg: #1E3248;
+    --scale-hover: #2A4A6A;
+    --scale-active: #4A90C4;
+    --scale-active-text: #fff;
+    --progress-bg: #2A4060;
+    --shadow: 0 2px 12px rgba(0,0,0,0.3);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1E2E;
+  --surface: #162638;
+  --surface2: #1E3248;
+  --primary: #7BB8E0;
+  --accent: #5AA8D8;
+  --accent2: #4A90C4;
+  --text: #E4EDF6;
+  --text-muted: #8AAEC8;
+  --border: #2A4060;
+  --scale-bg: #1E3248;
+  --scale-hover: #2A4A6A;
+  --scale-active: #4A90C4;
+  --scale-active-text: #fff;
+  --progress-bg: #2A4060;
+  --shadow: 0 2px 12px rgba(0,0,0,0.3);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100%;
+  padding-inline: 0;
+}
+
+/* ── Progress bar ── */
+#progress-bar-wrap {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 100;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 20px 12px;
+}
+#progress-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+#progress-bar {
+  height: 5px;
+  background: var(--progress-bg);
+  border-radius: 99px;
+  overflow: hidden;
+}
+#progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 99px;
+  transition: width 0.4s ease;
+  width: 0%;
+}
+
+/* ── Main container ── */
+#app {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 16px 80px;
+}
+
+/* ── Screens ── */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ── Consent screen ── */
+#consent-screen {
+  padding-top: 32px;
+}
+.consent-header {
+  text-align: center;
+  padding: 28px 20px 24px;
+  background: var(--surface);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+.consent-badge {
+  display: inline-block;
+  background: var(--surface2);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 4px 12px;
+  border-radius: 99px;
+  margin-bottom: 14px;
+}
+.consent-title {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1.5;
+  margin-bottom: 6px;
+  text-wrap: balance;
+}
+.consent-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+.consent-body {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+}
+.consent-body h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.consent-item {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: flex-start;
+}
+.consent-item:last-child { margin-bottom: 0; }
+.consent-icon {
+  font-size: 15px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.consent-item p {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+.consent-item p strong { color: var(--text); }
+.consent-check-wrap {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+  border: 2px solid var(--border);
+  transition: border-color 0.2s;
+}
+.consent-check-wrap.checked { border-color: var(--accent); }
+.consent-check-label {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  cursor: pointer;
+}
+.consent-checkbox {
+  width: 22px; height: 22px;
+  flex-shrink: 0;
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  transition: all 0.15s;
+  margin-top: 1px;
+  cursor: pointer;
+  color: transparent;
+}
+.consent-checkbox.checked {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.consent-check-text {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.6;
+  color: var(--text);
+}
+.consent-next-btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+.consent-next-btn:hover { opacity: 0.92; }
+.consent-next-btn:active { transform: scale(0.98); }
+.consent-next-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+/* ── Intro ── */
+#intro-screen {
+  padding-top: 32px;
+}
+.intro-header {
+  text-align: center;
+  padding: 32px 20px 28px;
+  background: var(--surface);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+.intro-badge {
+  display: inline-block;
+  background: var(--surface2);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 4px 12px;
+  border-radius: 99px;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+}
+.intro-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1.5;
+  margin-bottom: 8px;
+  text-wrap: balance;
+}
+.intro-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.info-card {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+}
+.info-card h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 12px;
+  letter-spacing: 0.03em;
+}
+.scale-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+.scale-row:last-child { margin-bottom: 0; }
+.scale-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--surface2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.scale-text {
+  flex: 1;
+}
+.scale-text strong {
+  font-size: 13px;
+  color: var(--text);
+  display: block;
+  margin-bottom: 2px;
+}
+.scale-text span {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.role-card {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+}
+.role-card h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 12px;
+}
+.role-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.role-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+}
+.role-btn:hover { border-color: var(--accent); background: var(--scale-bg); }
+.role-btn.selected { border-color: var(--accent); background: var(--scale-bg); color: var(--accent); font-weight: 600; }
+.role-dot {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.role-btn.selected .role-dot {
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--scale-bg);
+}
+
+.start-btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+  margin-top: 4px;
+}
+.start-btn:hover { opacity: 0.92; }
+.start-btn:active { transform: scale(0.98); }
+.start-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Section header ── */
+.section-header {
+  padding: 24px 0 16px;
+}
+.section-num {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.section-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1.4;
+}
+.section-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* ── Question card ── */
+.q-card {
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+  border: 1.5px solid transparent;
+  transition: border-color 0.2s;
+}
+.q-card.answered { border-color: var(--accent); }
+.q-num {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+.q-text {
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.7;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+
+/* ── Scale ── */
+.scale-group {
+  margin-bottom: 14px;
+}
+.scale-group:last-child { margin-bottom: 0; }
+.scale-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.scale-label .ends {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-top: 2px;
+}
+.scale-name {
+  font-weight: 700;
+  color: var(--text);
+  font-size: 14px;
+}
+.scale-buttons {
+  display: flex;
+  gap: 6px;
+}
+.scale-btn {
+  flex: 1;
+  aspect-ratio: 1;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--scale-bg);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-variant-numeric: tabular-nums;
+  min-width: 0;
+  padding: 0;
+  line-height: 1;
+}
+.scale-btn:hover { border-color: var(--accent); background: var(--scale-hover); }
+.scale-btn.active {
+  border-color: var(--scale-active);
+  background: var(--scale-active);
+  color: var(--scale-active-text);
+  box-shadow: 0 2px 8px rgba(74,144,196,0.3);
+}
+.scale-ends {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  padding: 0 2px;
+}
+.scale-ends span {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ── Navigation ── */
+.nav-bar {
+  position: sticky;
+  bottom: env(safe-area-inset-bottom, 0px);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 12px 20px;
+  display: flex;
+  gap: 10px;
+}
+.nav-btn {
+  flex: 1;
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.nav-btn.prev {
+  background: var(--surface2);
+  color: var(--text);
+}
+.nav-btn.next {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+}
+.nav-btn:hover { opacity: 0.88; }
+.nav-btn:active { transform: scale(0.97); }
+.nav-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+/* ── Finish screen ── */
+#finish-screen {
+  padding-top: 48px;
+  text-align: center;
+}
+.finish-icon {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  margin: 0 auto 24px;
+}
+.finish-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 10px;
+}
+.finish-text {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 32px;
+}
+.summary-card {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+  text-align: left;
+  margin-bottom: 20px;
+}
+.summary-card h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.summary-item:last-child { border-bottom: none; }
+.summary-item .label { color: var(--text-muted); }
+.summary-item .vals { font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; }
+</style>
+
+<!-- Progress bar (always visible) -->
+<div id="progress-bar-wrap" style="display:none">
+  <div id="progress-label">
+    <span id="progress-text">第 1 題，共 19 題</span>
+    <span id="progress-pct">0%</span>
+  </div>
+  <div id="progress-bar"><div id="progress-fill"></div></div>
+</div>
+
+<div id="app">
+
+<!-- ── Consent screen ── -->
+<div id="consent-screen" class="screen active">
+  <div class="consent-header">
+    <div class="consent-badge">學術研究知情同意</div>
+    <div class="consent-title">臺日公立學校IB學制下<br>「校中校」校長領導力研究</div>
+    <div class="consent-sub">臺北市立大學教育行政評鑑研究所<br>研究生：陳雅萍　　指導教授：林信志博士</div>
+  </div>
+
+  <div class="consent-body">
+    <h3>📋 研究說明</h3>
+    <div class="consent-item">
+      <div class="consent-icon">🎯</div>
+      <p><strong>研究目的：</strong>本研究旨在探討公立學校採行IB（國際文憑）學制下，校長領導行為、組織公平感知與教師次文化互動之關係，以提供學校行政實務參考。</p>
+    </div>
+    <div class="consent-item">
+      <div class="consent-icon">👤</div>
+      <p><strong>填答對象：</strong>任職於設有IB學程之公立學校的教師及行政主管。</p>
+    </div>
+    <div class="consent-item">
+      <div class="consent-icon">⏱️</div>
+      <p><strong>填答時間：</strong>約需 5～8 分鐘。</p>
+    </div>
+    <div class="consent-item">
+      <div class="consent-icon">🔒</div>
+      <p><strong>資料保密：</strong>本問卷為<strong>完全匿名</strong>，所蒐集之資料僅作學術研究用途，絕不對外揭露個人身份，亦不作其他商業或非學術用途。</p>
+    </div>
+    <div class="consent-item">
+      <div class="consent-icon">✋</div>
+      <p><strong>自願參與：</strong>您可在任何時間點停止作答，退出不會有任何影響。</p>
+    </div>
+    <div class="consent-item">
+      <div class="consent-icon">📮</div>
+      <p><strong>研究者聯絡：</strong>若有任何疑問，歡迎來信：<strong>ms.yaping@gmail.com</strong></p>
+    </div>
+  </div>
+
+  <div class="consent-check-wrap" id="consent-wrap">
+    <label class="consent-check-label" onclick="toggleConsent()">
+      <div class="consent-checkbox" id="consent-box"></div>
+      <span class="consent-check-text">我已閱讀並充分了解上述研究說明，確認自願參與本研究，同意填寫本問卷。</span>
+    </label>
+  </div>
+
+  <button class="consent-next-btn" id="consent-next-btn" onclick="proceedFromConsent()" disabled>
+    我同意，繼續填答 →
+  </button>
+</div>
+
+<!-- ── Intro screen ── -->
+<div id="intro-screen" class="screen">
+  <div class="intro-header">
+    <div class="intro-badge">學術研究問卷</div>
+    <div class="intro-title">臺日公立學校IB學制下<br>「校中校」校長領導力研究</div>
+    <div class="intro-sub">臺北市立大學教育行政評鑑研究所<br>研究生：陳雅萍　　指導教授：林信志博士</div>
+  </div>
+
+  <div class="info-card">
+    <h3>📋 填答說明</h3>
+    <div class="scale-row">
+      <div class="scale-icon">⭐</div>
+      <div class="scale-text">
+        <strong>重要性（I）</strong>
+        <span>您認為此行為或狀態對學校雙軌制順暢運作的重要程度<br>1＝非常不重要　～　5＝非常重要</span>
+      </div>
+    </div>
+    <div class="scale-row">
+      <div class="scale-icon">📊</div>
+      <div class="scale-text">
+        <strong>表現度（P）</strong>
+        <span>您觀察到校長（或學校）在此方面的實際表現程度<br>1＝非常不符合　～　5＝非常符合</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-card" style="margin-bottom:4px">
+    <h3>🔒 隱私說明</h3>
+    <p style="font-size:13px;color:var(--text-muted);line-height:1.7">本問卷為<strong style="color:var(--text)">匿名填答</strong>，所有資料僅供學術研究使用，不會揭露個人身份。</p>
+  </div>
+
+  <div class="role-card">
+    <h3>請選擇您的身份</h3>
+    <div class="role-options">
+      <button class="role-btn" onclick="selectRole(this,'IB任教教師')">
+        <div class="role-dot"></div>
+        <div>
+          <div>IB任教教師</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;font-weight:400">本學期有承擔任何 IB 課程教學者，即使同時也教普通班</div>
+        </div>
+      </button>
+      <button class="role-btn" onclick="selectRole(this,'IB資歷教師')">
+        <div class="role-dot"></div>
+        <div>
+          <div>IB資歷教師</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;font-weight:400">曾任教 IB 課程，但本學期未排課者</div>
+        </div>
+      </button>
+      <button class="role-btn" onclick="selectRole(this,'普通班教師')">
+        <div class="role-dot"></div>
+        <div>
+          <div>普通班教師</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;font-weight:400">從未承擔 IB 課程教學者</div>
+        </div>
+      </button>
+      <button class="role-btn" onclick="selectRole(this,'行政主管')">
+        <div class="role-dot"></div>
+        <div>
+          <div>行政主管（主任／組長）</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;font-weight:400">擔任處室主任或組長職務者，請依目前職務選擇此項</div>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <div class="role-card" style="margin-top:0">
+    <h3>電子信箱（選填）</h3>
+    <p style="font-size:12px;color:var(--text-muted);line-height:1.6;margin-bottom:12px">若您願意留下聯絡方式，研究者可在必要時與您確認，填寫後不影響匿名性。</p>
+    <input type="email" id="email-input" placeholder="example@school.edu.tw"
+      style="width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:10px;
+             background:var(--bg);color:var(--text);font-family:inherit;font-size:14px;
+             outline:none;transition:border-color 0.15s;"
+      onfocus="this.style.borderColor='var(--accent)'"
+      onblur="this.style.borderColor='var(--border)'"
+    >
+  </div>
+
+  <button class="start-btn" id="start-btn" onclick="startSurvey()" disabled>開始填答（共19題）</button>
+</div>
+
+<!-- ── Survey screen ── -->
+<div id="survey-screen" class="screen"></div>
+
+<!-- ── Finish screen ── -->
+<div id="finish-screen" class="screen">
+  <div class="finish-icon" id="finish-icon">⏳</div>
+  <div class="finish-title" id="finish-title">資料送出中…</div>
+  <div class="finish-text" id="finish-text">請稍候，正在將您的填答送出。</div>
+  <div class="summary-card" id="summary-card">
+    <h3>填答摘要</h3>
+    <div id="summary-body"></div>
+  </div>
+</div>
+
+</div><!-- /#app -->
+
+<!-- Nav bar -->
+<div class="nav-bar" id="nav-bar" style="display:none">
+  <button class="nav-btn prev" id="prev-btn" onclick="navigate(-1)">← 上一題</button>
+  <button class="nav-btn next" id="next-btn" onclick="navigate(1)">下一題 →</button>
+</div>
+
+<script>
+const QUESTIONS = [
+  // 構念一
+  { id:'PL-1', construct:1, constructTitle:'悖論領導行為', text:'校長能依據IB任教教師與普通班教師各自的實際需求，給予相應的重視與資源支持' },
+  { id:'PL-3', construct:1, constructTitle:'悖論領導行為', text:'校長公開發言時，能同等肯定IB任教教師與普通班教師的專業貢獻' },
+  { id:'PL-6', construct:1, constructTitle:'悖論領導行為', text:'校長在維持全校一致規範的同時，能保留兩種課程各自的專業自主空間' },
+  { id:'PL-8', construct:1, constructTitle:'悖論領導行為', text:'校長在面對外部壓力時，能堅守對IB任教教師與普通班教師均有利的辦學立場' },
+  { id:'ML-1', construct:1, constructTitle:'悖論領導行為', text:'行政主管能將學校政策，以兩種課程教師都能理解的方式清楚說明' },
+  { id:'ML-2', construct:1, constructTitle:'悖論領導行為', text:'行政主管會主動傳達兩種課程教師彼此的意見與需求' },
+  { id:'ML-3', construct:1, constructTitle:'悖論領導行為', text:'行政主管的居中協調，有助於緩解IB任教教師與普通班教師之間的日常摩擦與張力' },
+  // 構念二
+  { id:'DJ-1', construct:2, constructTitle:'組織公平感知', text:'學校在排課安排上，能兼顧IB任教教師與普通班教師各自的教學需求' },
+  { id:'DJ-4', construct:2, constructTitle:'組織公平感知', text:'學校對IB任教教師與普通班教師的工作付出，給予相應的肯定與實質支持' },
+  { id:'PJ-1', construct:2, constructTitle:'組織公平感知', text:'校長在制定涉及兩種學制的決策前，會事先徵詢IB任教教師與普通班教師雙方的意見' },
+  { id:'PJ-3', construct:2, constructTitle:'組織公平感知', text:'當教師對學校的決策有異議時，有表達意見或申訴的管道' },
+  { id:'IJ-2', construct:2, constructTitle:'組織公平感知', text:'當IB任教教師或普通班教師向校長反映問題時，校長能誠懇回應並盡力協助' },
+  { id:'IJ-3', construct:2, constructTitle:'組織公平感知', text:'校長在處理IB任教教師與普通班教師之間的議題時，對兩方教師的態度是平等的' },
+  // 構念三
+  { id:'SC-1', construct:3, constructTitle:'次文化互動', text:'IB任教教師與普通班教師共同使用校園中的日常活動空間（如辦公室、休息區）' },
+  { id:'SC-2', construct:3, constructTitle:'次文化互動', text:'學校的領導作為，能讓IB任教教師與普通班教師彼此感到是同一個團隊的成員' },
+  { id:'SC-3', construct:3, constructTitle:'次文化互動', text:'IB任教教師與普通班教師即便對雙軌制有不同看法，仍能維持良好的同事情誼' },
+  { id:'SC-4', construct:3, constructTitle:'次文化互動', text:'IB任教教師與普通班教師會就個別學生的行為或生活狀況互相討論溝通' },
+  { id:'SC-5', construct:3, constructTitle:'次文化互動', text:'IB任教教師與普通班教師會就教學方法或課程設計互相交流與請益' },
+  { id:'SC-6', construct:3, constructTitle:'次文化互動', text:'學校有具體的制度性安排（如跨學制聯合活動、共同備課或會議），促進IB任教教師與普通班教師定期互動' },
+];
+
+const CONSTRUCT_INFO = {
+  1: { label:'構念一', title:'悖論領導行為', desc:'Paradox Leadership', total:7 },
+  2: { label:'構念二', title:'組織公平感知', desc:'Organizational Justice', total:6 },
+  3: { label:'構念三', title:'次文化互動', desc:'School Subcultures', total:6 },
+};
+
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzCwdx-l4p1lkU27LPQuY5Ec79DD_VaWOag6teaZlwYq8hRBiuiJ9ZRiF42HrzyAxKY/exec';
+
+let answers = {}; // { 'PL-1': { i: 3, p: 4 }, ... }
+let currentIdx = 0;
+let userRole = '';
+let consentGiven = false;
+
+function toggleConsent() {
+  consentGiven = !consentGiven;
+  const box = document.getElementById('consent-box');
+  const wrap = document.getElementById('consent-wrap');
+  const btn = document.getElementById('consent-next-btn');
+  box.textContent = consentGiven ? '✓' : '';
+  box.classList.toggle('checked', consentGiven);
+  wrap.classList.toggle('checked', consentGiven);
+  btn.disabled = !consentGiven;
+}
+
+function proceedFromConsent() {
+  if (!consentGiven) return;
+  showScreen('intro-screen');
+}
+
+function selectRole(btn, role) {
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  userRole = role;
+  document.getElementById('start-btn').disabled = false;
+}
+
+function startSurvey() {
+  showScreen('survey-screen');
+  document.getElementById('progress-bar-wrap').style.display = 'block';
+  document.getElementById('nav-bar').style.display = 'flex';
+  currentIdx = 0;
+  renderQuestion();
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentIdx];
+  const total = QUESTIONS.length;
+  const answered = (answers[q.id]?.i && answers[q.id]?.p);
+  const ci = CONSTRUCT_INFO[q.construct];
+
+  // Construct position within its group
+  const sameConstruct = QUESTIONS.filter(x => x.construct === q.construct);
+  const posInConstruct = sameConstruct.indexOf(q) + 1;
+
+  // Progress
+  const totalAnswered = Object.keys(answers).filter(k => answers[k]?.i && answers[k]?.p).length;
+  const pct = Math.round((totalAnswered / total) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = `第 ${currentIdx + 1} 題，共 ${total} 題`;
+  document.getElementById('progress-pct').textContent = pct + '%';
+
+  // Nav buttons
+  document.getElementById('prev-btn').disabled = currentIdx === 0;
+  const isLast = currentIdx === total - 1;
+  const nextBtn = document.getElementById('next-btn');
+  nextBtn.textContent = isLast ? '完成送出 ✓' : '下一題 →';
+  nextBtn.disabled = !answers[q.id]?.i || !answers[q.id]?.p;
+
+  // Check if construct changed from previous question
+  let showHeader = false;
+  if (currentIdx === 0) showHeader = true;
+  else if (QUESTIONS[currentIdx - 1].construct !== q.construct) showHeader = true;
+
+  const container = document.getElementById('survey-screen');
+  container.innerHTML = `
+    ${showHeader ? `
+    <div class="section-header">
+      <div class="section-num">${ci.label}</div>
+      <div class="section-title">${ci.title}</div>
+      <div class="section-desc">${ci.desc}　共 ${ci.total} 題</div>
+    </div>` : ''}
+    <div class="q-card ${answered ? 'answered' : ''}" id="q-card">
+      <div class="q-num">第 ${currentIdx + 1} 題 / ${posInConstruct} of ${ci.total}</div>
+      <div class="q-text">${q.text}</div>
+
+      <div class="scale-group">
+        <div class="scale-label"><span class="scale-name">⭐ 重要性（I）</span></div>
+        <div class="scale-buttons" id="scale-i">
+          ${[1,2,3,4,5].map(v => `
+            <button class="scale-btn ${answers[q.id]?.i === v ? 'active' : ''}"
+              onclick="setAnswer('${q.id}','i',${v})" aria-label="重要性${v}">${v}</button>
+          `).join('')}
+        </div>
+        <div class="scale-ends"><span>非常不重要</span><span>非常重要</span></div>
+      </div>
+
+      <div class="scale-group">
+        <div class="scale-label"><span class="scale-name">📊 表現度（P）</span></div>
+        <div class="scale-buttons" id="scale-p">
+          ${[1,2,3,4,5].map(v => `
+            <button class="scale-btn ${answers[q.id]?.p === v ? 'active' : ''}"
+              onclick="setAnswer('${q.id}','p',${v})" aria-label="表現度${v}">${v}</button>
+          `).join('')}
+        </div>
+        <div class="scale-ends"><span>非常不符合</span><span>非常符合</span></div>
+      </div>
+    </div>
+  `;
+}
+
+function setAnswer(qid, dim, val) {
+  if (!answers[qid]) answers[qid] = {};
+  answers[qid][dim] = val;
+  // Re-render to reflect selection and update nav
+  renderQuestion();
+  // Smooth scroll card into view
+  document.getElementById('q-card')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function navigate(dir) {
+  const isLast = currentIdx === QUESTIONS.length - 1;
+  if (dir === 1 && isLast) {
+    finishSurvey();
+    return;
+  }
+  currentIdx = Math.max(0, Math.min(QUESTIONS.length - 1, currentIdx + dir));
+  renderQuestion();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function finishSurvey() {
+  document.getElementById('progress-bar-wrap').style.display = 'none';
+  document.getElementById('nav-bar').style.display = 'none';
+  showScreen('finish-screen');
+
+  // Build summary
+  const constructs = [1, 2, 3];
+  let html = `<div class="summary-item"><span class="label">填答身份</span><span class="vals">${userRole}</span></div>`;
+  constructs.forEach(c => {
+    const ci = CONSTRUCT_INFO[c];
+    const qs = QUESTIONS.filter(q => q.construct === c);
+    const avgI = (qs.reduce((s, q) => s + (answers[q.id]?.i || 0), 0) / qs.length).toFixed(1);
+    const avgP = (qs.reduce((s, q) => s + (answers[q.id]?.p || 0), 0) / qs.length).toFixed(1);
+    html += `<div class="summary-item">
+      <span class="label">${ci.label} ${ci.title}</span>
+      <span class="vals">I: ${avgI} / P: ${avgP}</span>
+    </div>`;
+  });
+  document.getElementById('summary-body').innerHTML = html;
+
+  // Submit to Google Sheets
+  const email = document.getElementById('email-input')?.value?.trim() || '';
+  const payload = {
+    lang: 'TW',
+    role: userRole,
+    email: email,
+    answers: answers
+  };
+
+  fetch(GAS_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(() => {
+    document.getElementById('finish-icon').textContent = '✓';
+    document.getElementById('finish-title').textContent = '感謝您的填答！';
+    document.getElementById('finish-text').textContent = '您的意見對本研究極為重要，填答結果已成功送出，感謝您撥冗協助。';
+  })
+  .catch(() => {
+    document.getElementById('finish-icon').textContent = '⚠️';
+    document.getElementById('finish-title').textContent = '感謝您的填答！';
+    document.getElementById('finish-text').textContent = '您的填答已完成。若網路不穩導致送出失敗，請聯絡研究者：ms.yaping@gmail.com';
+  });
+}
+</script>
